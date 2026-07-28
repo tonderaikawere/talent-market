@@ -10,13 +10,13 @@ import ProfileDetails from './components/ProfileDetails';
 const App = () => {
   return (
     <Router>
-      <Box>
+      <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <Navbar />
-        <Grid container spacing={2} style={{ marginTop: '64px' }}>
-          <Grid item xs={2}>
+        <Grid container spacing={0} sx={{ marginTop: '64px', flexGrow: 1 }}>
+          <Grid item xs={12} md={3} sx={{ borderRight: '1px solid rgba(255, 255, 255, 0.08)', background: 'rgba(3, 7, 18, 0.2)' }}>
             <JobList />
           </Grid>
-          <Grid item xs={10}>
+          <Grid item xs={12} md={9}>
             <Routes>
               <Route path="/" element={<ProfileList />} />
               <Route path="/jobs/:id" element={<JobDetails />} />

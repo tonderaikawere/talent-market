@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Typography, Container, Box, Paper, IconButton, Button, Link as MuiLink } from '@mui/material';
+import { Typography, Container, Box, Paper, IconButton, Button, Link as MuiLink, Avatar } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import LanguageIcon from '@mui/icons-material/Language';
+import ArticleIcon from '@mui/icons-material/Article';
 
 const ProfileDetails = () => {
   const { id } = useParams();
@@ -29,55 +34,208 @@ const ProfileDetails = () => {
   }, [id]);
 
   const handleBackClick = () => {
-    navigate('/');
+    navigate(-1);
   };
 
-//   const handleApplyClick = () => {
-//     setOpenSnackbar(true);
-//   };
-
-//   const handleCloseSnackbar = () => {
-//     setOpenSnackbar(false);
-//   };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return (
+    <Container sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+      <Typography sx={{ fontFamily: "'Outfit', sans-serif", color: '#9ca3af' }}>Loading Profile...</Typography>
+    </Container>
+  );
+  if (error) return (
+    <Container sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+      <Typography color="error" sx={{ fontFamily: "'Outfit', sans-serif" }}>{error}</Typography>
+    </Container>
+  );
 
   return (
-    <Container style={{ height: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Container sx={{ py: 6, display: 'flex', justifyContent: 'center' }}>
       {profile ? (
-        <Paper elevation={3} style={{ padding: '16px', maxWidth: '600px', width: '100%' }}>
-             <IconButton onClick={handleBackClick} style={{ alignSelf: 'flex-start', marginTop: '16px' , position:"absolute"}}>
-        <ArrowBackIcon />
-      </IconButton>
-          <Box textAlign="center">
-          <Box mt={2}>
-            <img src={profile.image} alt={`${profile.name} image`} style={{ width: '150px', height: '150px' }} />
-          </Box>
-            <Typography variant="h4" component="h1" mt={2}>
+        <Paper
+          elevation={0}
+          sx={{
+            padding: { xs: 3, md: 5 },
+            maxWidth: '700px',
+            width: '100%',
+            background: 'rgba(30, 41, 59, 0.4)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.05)',
+            borderRadius: '24px',
+            position: 'relative',
+          }}
+        >
+          <IconButton
+            onClick={handleBackClick}
+            sx={{
+              position: 'absolute',
+              top: '20px',
+              left: '20px',
+              color: '#9ca3af',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid rgba(255, 255, 255, 0.05)',
+              '&:hover': {
+                backgroundColor: 'rgba(168, 85, 247, 0.2)',
+                color: '#c084fc',
+              },
+              transition: 'all 0.3s ease',
+            }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', mt: 4 }}>
+            <Avatar
+              src={profile.image}
+              alt={`${profile.name} image`}
+              sx={{
+                width: 140,
+                height: 140,
+                border: '4px solid rgba(168, 85, 247, 0.3)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+                mb: 3,
+              }}
+            />
+
+            <Typography
+              variant="h4"
+              component="h1"
+              sx={{
+                fontWeight: 800,
+                fontFamily: "'Outfit', sans-serif",
+                color: '#f3f4f6',
+                mb: 1,
+              }}
+            >
               {profile.name}
             </Typography>
-            <Typography variant="body1" component="p" mt={2}>
-            {profile.summary}
-          </Typography>
-            <Typography variant="body1" component="p" mt={2}>
-              <strong>CV:</strong> <MuiLink href={profile.cvLink} target="_blank" rel="noopener noreferrer">{profile.cvLink}</MuiLink>
+
+            <Typography
+              variant="subtitle1"
+              sx={{
+                color: '#a78bfa',
+                fontWeight: 600,
+                fontFamily: "'Outfit', sans-serif",
+                mb: 3,
+              }}
+            >
+              {profile.description}
             </Typography>
-            <Typography variant="body1" component="p" mt={2}>
-              <strong>Portfolio:</strong> <MuiLink href={profile.portfolio} target="_blank" rel="noopener noreferrer">{profile.portfolio}</MuiLink>
+
+            <Typography
+              variant="body1"
+              sx={{
+                color: '#d1d5db',
+                fontFamily: "'Outfit', sans-serif",
+                lineHeight: 1.6,
+                maxWidth: '550px',
+                mb: 4,
+              }}
+            >
+              {profile.summary}
             </Typography>
-            <Typography variant="body2" component="p" mt={2}>
-              <strong>Social Media:</strong>
+
+            <Box sx={{ display: 'flex', gap: 2, mb: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
+              <Button
+                component={MuiLink}
+                href={profile.portfolio}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="outlined"
+                startIcon={<LanguageIcon />}
+                sx={{
+                  color: '#f3f4f6',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  textTransform: 'none',
+                  fontFamily: "'Outfit', sans-serif",
+                  borderRadius: '10px',
+                  px: 3,
+                  '&:hover': {
+                    borderColor: '#a855f7',
+                    backgroundColor: 'rgba(168, 85, 247, 0.08)',
+                  },
+                }}
+              >
+                Portfolio
+              </Button>
+              <Button
+                component={MuiLink}
+                href={profile.cvLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="outlined"
+                startIcon={<ArticleIcon />}
+                sx={{
+                  color: '#f3f4f6',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  textTransform: 'none',
+                  fontFamily: "'Outfit', sans-serif",
+                  borderRadius: '10px',
+                  px: 3,
+                  '&:hover': {
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.08)',
+                  },
+                }}
+              >
+                Resume / CV
+              </Button>
+            </Box>
+
+            <Typography
+              variant="body2"
+              sx={{
+                color: '#9ca3af',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                mb: 2,
+              }}
+            >
+              Connect with {profile.name.split(' ')[0]}
             </Typography>
-            <Box display="flex" justifyContent="center" gap="10px" mt={2}>
-              <MuiLink href={profile.facebook} target="_blank" rel="noopener noreferrer">Facebook</MuiLink>
-              <MuiLink href={profile.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</MuiLink>
-              <MuiLink href={profile.twitter} target="_blank" rel="noopener noreferrer">Twitter</MuiLink>
+
+            <Box display="flex" justifyContent="center" gap="16px">
+              <IconButton
+                component={MuiLink}
+                href={profile.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  color: '#9ca3af',
+                  '&:hover': { color: '#0077b5', backgroundColor: 'rgba(0, 119, 181, 0.1)' },
+                }}
+              >
+                <LinkedInIcon sx={{ fontSize: 28 }} />
+              </IconButton>
+              <IconButton
+                component={MuiLink}
+                href={profile.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  color: '#9ca3af',
+                  '&:hover': { color: '#1da1f2', backgroundColor: 'rgba(29, 161, 242, 0.1)' },
+                }}
+              >
+                <TwitterIcon sx={{ fontSize: 28 }} />
+              </IconButton>
+              <IconButton
+                component={MuiLink}
+                href={profile.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  color: '#9ca3af',
+                  '&:hover': { color: '#1877f2', backgroundColor: 'rgba(24, 119, 242, 0.1)' },
+                }}
+              >
+                <FacebookIcon sx={{ fontSize: 28 }} />
+              </IconButton>
             </Box>
           </Box>
         </Paper>
       ) : (
-        <div>Profile not found</div>
+        <Typography variant="h6" color="textSecondary">Profile not found</Typography>
       )}
     </Container>
   );

@@ -1,6 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Typography, Container, Box, Paper, IconButton, Button, Snackbar, Alert, Avatar, Divider } from '@mui/material';
+import {
+  Typography,
+  Container,
+  Box,
+  Paper,
+  IconButton,
+  Button,
+  Snackbar,
+  Alert,
+  Avatar,
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField
+} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -12,6 +28,11 @@ const JobDetails = () => {
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Application Modal States
+  const [openModal, setOpenModal] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formErrors, setFormErrors] = useState({});
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   useEffect(() => {
@@ -36,8 +57,41 @@ const JobDetails = () => {
     navigate(-1);
   };
 
-  const handleApplyClick = () => {
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setFormData({ name: '', email: '', message: '' });
+    setFormErrors({});
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const errors = {};
+    if (!formData.name.trim()) errors.name = 'Full name is required';
+    if (!formData.email.trim()) {
+      errors.email = 'Email address is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = 'Email address is invalid';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    // Success simulation
+    setOpenModal(false);
     setOpenSnackbar(true);
+    setFormData({ name: '', email: '', message: '' });
+    setFormErrors({});
   };
 
   const handleCloseSnackbar = () => {
@@ -195,7 +249,7 @@ const JobDetails = () => {
 
             <Button
               variant="contained"
-              onClick={handleApplyClick}
+              onClick={handleOpenModal}
               sx={{
                 background: 'linear-gradient(45deg, #a855f7, #6366f1)',
                 borderRadius: '12px',
@@ -214,6 +268,114 @@ const JobDetails = () => {
             >
               Apply for this Job
             </Button>
+
+            {/* Application Form Dialog */}
+            <Dialog
+              open={openModal}
+              onClose={handleCloseModal}
+              PaperProps={{
+                sx: {
+                  background: '#0f172a',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '20px',
+                  color: '#f3f4f6',
+                  maxWidth: '500px',
+                  width: '100%',
+                }
+              }}
+            >
+              <DialogTitle sx={{ fontWeight: 800, fontFamily: "'Outfit', sans-serif", pb: 1 }}>
+                Apply for {job.title}
+              </DialogTitle>
+              <DialogContent sx={{ pt: '10px !important' }}>
+                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                  <TextField
+                    name="name"
+                    label="Full Name"
+                    variant="outlined"
+                    fullWidth
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    error={!!formErrors.name}
+                    helperText={formErrors.name}
+                    InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)', '&.Mui-focused': { color: '#a855f7' } } }}
+                    InputProps={{
+                      sx: {
+                        color: '#f3f4f6',
+                        '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' },
+                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#a855f7' }
+                      }
+                    }}
+                  />
+                  <TextField
+                    name="email"
+                    label="Email Address"
+                    type="email"
+                    variant="outlined"
+                    fullWidth
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    error={!!formErrors.email}
+                    helperText={formErrors.email}
+                    InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)', '&.Mui-focused': { color: '#a855f7' } } }}
+                    InputProps={{
+                      sx: {
+                        color: '#f3f4f6',
+                        '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' },
+                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#a855f7' }
+                      }
+                    }}
+                  />
+                  <TextField
+                    name="message"
+                    label="Cover Letter / Message"
+                    variant="outlined"
+                    fullWidth
+                    multiline
+                    rows={4}
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)', '&.Mui-focused': { color: '#a855f7' } } }}
+                    InputProps={{
+                      sx: {
+                        color: '#f3f4f6',
+                        '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' },
+                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#a855f7' }
+                      }
+                    }}
+                  />
+                </Box>
+              </DialogContent>
+              <DialogActions sx={{ p: 3, pt: 1 }}>
+                <Button
+                  onClick={handleCloseModal}
+                  sx={{ color: '#9ca3af', textTransform: 'none', fontWeight: 600, fontFamily: "'Outfit', sans-serif" }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSubmit}
+                  variant="contained"
+                  sx={{
+                    background: 'linear-gradient(45deg, #a855f7, #6366f1)',
+                    borderRadius: '8px',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    fontFamily: "'Outfit', sans-serif",
+                    boxShadow: 'none',
+                    '&:hover': {
+                      background: 'linear-gradient(45deg, #c084fc, #818cf8)',
+                      boxShadow: '0 4px 12px rgba(168, 85, 247, 0.3)',
+                    }
+                  }}
+                >
+                  Submit Application
+                </Button>
+              </DialogActions>
+            </Dialog>
 
             <Snackbar
               open={openSnackbar}

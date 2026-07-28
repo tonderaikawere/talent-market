@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Box, Typography, CircularProgress } from '@mui/material';
+import { useSearchParams } from 'react-router-dom';
 import ProfileCard from './ProfileCard';
 
 const ProfileList = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchParams] = useSearchParams();
+  const searchTerm = searchParams.get('search') || '';
 
   useEffect(() => {
     fetch('http://localhost:5000/api/profiles')
@@ -25,6 +28,15 @@ const ProfileList = () => {
       });
   }, []);
 
+  const filteredProfiles = profiles.filter(profile => {
+    const term = searchTerm.toLowerCase();
+    return (
+      profile.name.toLowerCase().includes(term) ||
+      profile.description.toLowerCase().includes(term) ||
+      profile.summary.toLowerCase().includes(term)
+    );
+  });
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
@@ -36,19 +48,44 @@ const ProfileList = () => {
   if (error) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
-        <Typography color="error">Error: {error}</Typography>
+        <Typography color="error" sx={{ fontFamily: "'Outfit', sans-serif" }}>Error: {error}</Typography>
       </Box>
     );
   }
 
   return (
-    <Grid container spacing={3} justifyContent="center" style={{ maxHeight: 'calc(100vh - 64px)', overflowY: 'auto', padding: '16px' }}>
-      {profiles.map(profile => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={profile.id}>
-          <ProfileCard profile={profile} />
+    <Box sx={{ p: 4, height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+      <Typography
+        variant="h5"
+        sx={{
+          fontWeight: 700,
+          fontFamily: "'Outfit', sans-serif",
+          mb: 3,
+          color: '#f3f4f6',
+        }}
+      >
+        {searchTerm ? `Search Results for "${searchTerm}"` : 'Recommended Talent'}
+      </Typography>
+
+      {filteredProfiles.length > 0 ? (
+        <Grid container spacing={3}>
+          {filteredProfiles.map(profile => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={profile.id}>
+              <ProfileCard profile={profile} />
+            </Grid>
+          ))}
         </Grid>
-      ))}
-    </Grid>
+      ) : (
+        <Box sx={{ textAlign: 'center', py: 8 }}>
+          <Typography variant="h6" sx={{ color: '#9ca3af', fontFamily: "'Outfit', sans-serif", mb: 1 }}>
+            No talent found
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#6b7280', fontFamily: "'Outfit', sans-serif" }}>
+            Try adjusting your search terms or keywords.
+          </Typography>
+        </Box>
+      )}
+    </Box>
   );
 };
 
